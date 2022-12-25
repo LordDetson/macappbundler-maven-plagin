@@ -39,9 +39,9 @@ public class BundleMacAppMojo extends AbstractMojo {
     private static final String MAC_OS = "MacOS";
     private static final String RESOURCES = "Resources";
     private static final String JAVA = "Java";
+    private static final String JRE = "jre";
     private static final String RUN_APP_SCRIPT_NAME = "run";
-    private static final String JRE_SOURCE_PATH = "Contents/Home/jre";
-    private static final String JAVA_PATH = "jre/bin/java";
+    private static final String JAVA_PATH = "Contents/Home/bin/java";
     private static final String TARGET_CLASS_ROOT = "target/classes";
     private static final String INFO_FILE_NAME = "Info.plist";
     private static final String INFO_TEMPLATE_NAME = "Info.plist.template";
@@ -77,6 +77,7 @@ public class BundleMacAppMojo extends AbstractMojo {
     private Path macOsDir;
     private Path resourcesDir;
     private Path javaDir;
+    private Path jreDir;
     private String appJarName;
 
     @Override
@@ -116,11 +117,12 @@ public class BundleMacAppMojo extends AbstractMojo {
     private void copyJre() throws MojoExecutionException {
         getLog().info("Coping JRE");
 
-        Path jreSource = Paths.get(jrePath, JRE_SOURCE_PATH);
+        Path jreSource = Paths.get(jrePath);
         if(Files.exists(jreSource) && Files.isDirectory(jreSource)) {
             getLog().info("Copying the JRE from \"" + jreSource + "\" to \"" + javaDir + "\"");
             try {
-                Files.copy(jreSource, javaDir);
+                jreDir = javaDir.resolve(JRE);
+                Files.copy(jreSource, jreDir);
             }
             catch(IOException e) {
                 throw new MojoExecutionException("Unexpected error while coping JRE", e);
@@ -168,7 +170,7 @@ public class BundleMacAppMojo extends AbstractMojo {
         List<String> script = new ArrayList<>();
         script.add("#!/bin/bash");
         script.add("cd \"$(dirname \"$0\")\"");
-        Path javaPath = javaDir.resolve(JAVA_PATH);
+        Path javaPath = jreDir.resolve(JAVA_PATH);
         Path appJarPath = javaDir.resolve(appJarName);
         script.add("./" + javaPath + " -jar " + appJarPath);
         writeFile(runAppScriptFile, script);
