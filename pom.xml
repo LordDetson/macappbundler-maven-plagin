@@ -11,7 +11,7 @@
 
     <name>App for Mac OS bundle maven plugin</name>
     <description>Maven plugin that creates an Application Bundle for Mac OS</description>
-    <url>https://github.com/LordDetson/macappbundler-manager-swing</url>
+    <url>https://github.com/LordDetson/macappbundler-maven-plugin</url>
     <inceptionYear>2022</inceptionYear>
 
     <licenses>
@@ -41,9 +41,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:LordDetson/macappbundler-maven-plagin.git</connection>
-        <developerConnection>scm:git:git@github.com:LordDetson/macappbundler-maven-plagin.git</developerConnection>
-        <url>https://github.com/LordDetson/macappbundler-maven-plagin.git</url>
+        <connection>scm:git:git@github.com:LordDetson/macappbundler-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:LordDetson/macappbundler-maven-plugin.git</developerConnection>
+        <url>https://github.com/LordDetson/macappbundler-maven-plugin.git</url>
     </scm>
 
     <properties>
