@@ -167,7 +167,7 @@ public class BundleMacAppMojo extends AbstractMojo {
         script.add("cd \"$(dirname \"$0\")\"");
         Path javaPath = jreDir.resolve(JAVA_PATH);
         Path appJarPath = javaDir.resolve(appJarName);
-        script.add("./" + appDir.relativize(javaPath) + " -jar " + appDir.relativize(appJarPath));
+        script.add("../" + contentsDir.relativize(javaPath) + " -jar ../" + contentsDir.relativize(appJarPath));
         writeFile(runAppScriptFile, script);
         if(!SystemUtils.IS_OS_WINDOWS) {
             Set<PosixFilePermission> permissions = Arrays.stream(PosixFilePermission.values())
