@@ -93,7 +93,9 @@ public class BundleMacAppMojo extends AbstractMojo {
         getLog().info("Creating directory structure");
 
         buildDir = Paths.get(buildPath);
-        createDirectory(buildDir);
+        if(!Files.exists(buildDir)) {
+            createDirectory(buildDir);
+        }
 
         appDir = buildDir.resolve(String.format(APP_DIR_NAME_FORMAT, name));
         createDirectory(appDir);
