@@ -143,7 +143,7 @@ public class BundleMacAppMojo extends AbstractMojo {
                 Path appJar = Paths.get(appJarSet.get(0).getDirectory(), appJarName);
                 if(Files.exists(appJar) && Files.isRegularFile(appJar)) {
                     try {
-                        Files.copy(appJar, javaDir);
+                        Files.copy(appJar, javaDir.resolve(appJarName));
                     }
                     catch(IOException e) {
                         throw new MojoExecutionException("Unexpected error while coping Application JAR", e);
