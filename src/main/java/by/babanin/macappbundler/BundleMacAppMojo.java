@@ -193,11 +193,11 @@ public class BundleMacAppMojo extends AbstractMojo {
     private void copyIcon() throws MojoExecutionException {
         if(iconPath != null) {
             getLog().info("Coping icon");
-            Path iconFile = Paths.get(TARGET_CLASS_ROOT, iconPath);
+            Path iconFile = Paths.get(project.getBasedir().getPath(), iconPath);
             if(Files.exists(iconFile) && Files.isRegularFile(iconFile)) {
                 getLog().info("Coping icon from \"" + iconFile + "\"");
                 try {
-                    Files.copy(iconFile, resourcesDir);
+                    Files.copy(iconFile, resourcesDir.resolve(iconFile.getFileName()));
                 }
                 catch(IOException e) {
                     throw new MojoExecutionException("Unexpected error while coping icon", e);
