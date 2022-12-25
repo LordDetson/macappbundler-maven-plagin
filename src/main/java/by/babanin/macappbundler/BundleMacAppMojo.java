@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -174,13 +175,18 @@ public class BundleMacAppMojo extends AbstractMojo {
         Path appJarPath = javaDir.resolve(appJarName);
         script.add("./" + javaPath + " -jar " + appJarPath);
         writeFile(runAppScriptFile, script);
-        Set<PosixFilePermission> permissions = Arrays.stream(PosixFilePermission.values())
-                .collect(Collectors.toSet());
-        try {
-            Files.setPosixFilePermissions(runAppScriptFile, permissions);
+        if(!SystemUtils.IS_OS_WINDOWS) {
+            Set<PosixFilePermission> permissions = Arrays.stream(PosixFilePermission.values())
+                    .collect(Collectors.toSet());
+            try {
+                Files.setPosixFilePermissions(runAppScriptFile, permissions);
+            }
+            catch(IOException e) {
+                throw new MojoExecutionException("Unexpected error while set permissions", e);
+            }
         }
-        catch(IOException e) {
-            throw new MojoExecutionException("Unexpected error while set permissions", e);
+        else {
+            getLog().warn("The run script was created without executable file permissions for UNIX systems");
         }
     }
 
