@@ -60,7 +60,7 @@ public class BundleMacAppMojo extends AbstractMojo {
     private String jrePath;
 
     @Parameter(required = true)
-    private FileSet appJarSet;
+    private List<FileSet> appJarSet;
 
     @Parameter
     private String iconPath;
@@ -132,24 +132,29 @@ public class BundleMacAppMojo extends AbstractMojo {
     private void copyAppJar() throws MojoExecutionException {
         getLog().info("Coping Application JAR file");
 
-        List<String> includes = appJarSet.getIncludes();
-        if(includes.size() == 1) {
-            appJarName = includes.get(0);
-            Path appJar = Paths.get(appJarSet.getDirectory(), appJarName);
-            if(Files.exists(appJar) && Files.isRegularFile(appJar)) {
-                try {
-                    Files.copy(appJar, javaDir);
+        if(appJarSet.size() == 1) {
+            List<String> includes = appJarSet.get(0).getIncludes();
+            if(includes.size() == 1) {
+                appJarName = includes.get(0);
+                Path appJar = Paths.get(appJarSet.get(0).getDirectory(), appJarName);
+                if(Files.exists(appJar) && Files.isRegularFile(appJar)) {
+                    try {
+                        Files.copy(appJar, javaDir);
+                    }
+                    catch(IOException e) {
+                        throw new MojoExecutionException("Unexpected error while coping Application JAR", e);
+                    }
                 }
-                catch(IOException e) {
-                    throw new MojoExecutionException("Unexpected error while coping Application JAR", e);
+                else {
+                    throw new MojoExecutionException("Application JAR \"" + appJar + "\" not found");
                 }
             }
             else {
-                throw new MojoExecutionException("Application JAR \"" + appJar + "\" not found");
+                throw new MojoExecutionException("Must have one included jar");
             }
         }
         else {
-            throw new MojoExecutionException("Must have one included jar");
+            throw new MojoExecutionException("Must have one file set");
         }
     }
 
