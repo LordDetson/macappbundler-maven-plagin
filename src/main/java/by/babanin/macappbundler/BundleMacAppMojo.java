@@ -120,13 +120,8 @@ public class BundleMacAppMojo extends AbstractMojo {
         Path jreSource = Paths.get(jrePath);
         if(Files.exists(jreSource) && Files.isDirectory(jreSource)) {
             getLog().info("Copying the JRE from \"" + jreSource + "\" to \"" + javaDir + "\"");
-            try {
-                jreDir = javaDir.resolve(JRE);
-                Files.copy(jreSource, jreDir);
-            }
-            catch(IOException e) {
-                throw new MojoExecutionException("Unexpected error while coping JRE", e);
-            }
+            jreDir = javaDir.resolve(JRE);
+            copyDirectoryRecursively(jreSource.toString(), jreDir.toString());
         }
         else {
             throw new MojoExecutionException("JRE directory " + jreSource + " not found");
@@ -172,7 +167,7 @@ public class BundleMacAppMojo extends AbstractMojo {
         script.add("cd \"$(dirname \"$0\")\"");
         Path javaPath = jreDir.resolve(JAVA_PATH);
         Path appJarPath = javaDir.resolve(appJarName);
-        script.add("./" + javaPath + " -jar " + appJarPath);
+        script.add("./" + appDir.relativize(javaPath) + " -jar " + appDir.relativize(appJarPath));
         writeFile(runAppScriptFile, script);
         if(!SystemUtils.IS_OS_WINDOWS) {
             Set<PosixFilePermission> permissions = Arrays.stream(PosixFilePermission.values())
