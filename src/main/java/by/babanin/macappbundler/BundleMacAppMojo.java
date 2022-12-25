@@ -43,9 +43,8 @@ public class BundleMacAppMojo extends AbstractMojo {
     private static final String JRE = "jre";
     private static final String RUN_APP_SCRIPT_NAME = "run";
     private static final String JAVA_PATH = "Contents/Home/bin/java";
-    private static final String TARGET_CLASS_ROOT = "target/classes";
     private static final String INFO_FILE_NAME = "Info.plist";
-    private static final String INFO_TEMPLATE_NAME = "Info.plist.template";
+    private static final String INFO_TEMPLATE_PATH = "by/babanin/macappbundler/Info.plist.template";
     private static final String DEFAULT_ICON_NAME = "GenericJavaApp.icns";
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
@@ -230,31 +229,24 @@ public class BundleMacAppMojo extends AbstractMojo {
         velocityContext.put("name", name);
         velocityContext.put("version", version);
 
-
-        Path infoTemplate = Paths.get(TARGET_CLASS_ROOT, INFO_TEMPLATE_NAME);
-        if(Files.exists(infoTemplate) && Files.isRegularFile(infoTemplate)) {
-            Writer writer = null;
-            try {
-                Path infoFile = contentsDir.resolve(INFO_FILE_NAME);
-                writer = new OutputStreamWriter(new FileOutputStream(infoFile.toFile()), StandardCharsets.UTF_8);
-                velocity.getEngine().mergeTemplate(infoTemplate.toString(), "UTF-8", velocityContext, writer);
-            }
-            catch(FileNotFoundException e) {
-                throw new MojoExecutionException("Unexpected error while merging " + INFO_TEMPLATE_NAME, e);
-            }
-            finally {
-                if(writer != null) {
-                    try {
-                        writer.close();
-                    }
-                    catch(IOException e) {
-                        throw new MojoExecutionException("Unexpected error while closing " + INFO_TEMPLATE_NAME, e);
-                    }
+        Writer writer = null;
+        try {
+            Path infoFile = contentsDir.resolve(INFO_FILE_NAME);
+            writer = new OutputStreamWriter(new FileOutputStream(infoFile.toFile()), StandardCharsets.UTF_8);
+            velocity.getEngine().mergeTemplate(INFO_TEMPLATE_PATH, "UTF-8", velocityContext, writer);
+        }
+        catch(FileNotFoundException e) {
+            throw new MojoExecutionException("Unexpected error while merging " + INFO_TEMPLATE_PATH, e);
+        }
+        finally {
+            if(writer != null) {
+                try {
+                    writer.close();
+                }
+                catch(IOException e) {
+                    throw new MojoExecutionException("Unexpected error while closing " + INFO_TEMPLATE_PATH, e);
                 }
             }
-        }
-        else {
-            throw new MojoExecutionException(infoTemplate + " not found");
         }
     }
 }
